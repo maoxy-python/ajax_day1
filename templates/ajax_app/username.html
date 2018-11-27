@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+{#    <script src="/static/ajax_app/js/jquery-1.11.1.min.js"></script>#}
+    <script src="{% static 'ajax_app/js/jquery-1.11.1.min.js' %}"></script>
+    <script>
+        var a=0;
+        var b=0;
+        function verify_username(){
+            //ajax编码流程
+            //1.核心对象  XHR 创建
+            // 浏览器差异  IE内核：ie    webkit内核：chrome opera safiri ff
+            var xhr;
+            if(window.ActiveXObject){//有值  undefined
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            }else if(window.XMLHttpRequest){//webkit   IE7+
+                xhr = new XMLHttpRequest();
+            }
+            //2.xhr初始化  请求方式  请求地址  请求参数
+            xhr.open("post","{% url 'ajax:username' %}")
+            //3.发送请求
+            //3.1 csrf_token
+            var token = "{{csrf_token}}";
+            xhr.setRequestHeader("X-CSRFToken",token);
+            //3.2 设置请求参数的 编码类型  application/x-www-form-urlencoded
+            xhr.setRequestHeader("content-type","application/x-www-form-urlencoded");
+            xhr.send("username="+$("#uname").val())
+            //转圈
+            $("#result").attr("src","{% static 'ajax_app/image/load.gif' %}");
+            //4.接受响应
+            // 1> 响应完整   2>请求是成功执行
+            // xhr属性1： readyState  0=创建完毕  1=初始化  2=发送   3=响应开始返回   4=响应完毕
+            // xhr属性2： status 200=成功  404=资源未找到  500=服务器程序错误
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState == 4 && xhr.status == 200){//响应完毕，请求成功
+                    //接受响应  responseText
+                    var ret = xhr.responseText; //ok  error  "1"   "0"
+                    //5.dom+css 将响应内容 展示到页面的某个局部中
+                    if(ret=="ok"){
+                        //img 显示 对勾
+                        $("#result").attr("src","{% static 'ajax_app/image/ok.gif' %}");
+                        a=1;
+                    }else{
+                        //img 显示 叉
+                        $("#result").attr("src","{% static 'ajax_app/image/error.jpg' %}");
+                    }
+                }
+            }
+        }
+
+        function captcha(){
+            console.log("down~~");
+            len = $("#code").val().length;
+            console.log(len);
+            if(len==4){
+                //校验请求
+                b=1;
+                $("#code").blur();
+            }
+        }
+        function submit137(){
+            if(a && b){
+                //如果所有验证都合法，提交表单
+                $("#ff").submit();
+            }else{
+                alert("请完成表单的校验");
+            }
+        }
+    </script>
+</head>
+<body>
+    <form action="http://www.baidu.com" id="ff">
+        username:<input type="text" name="" id="uname" onblur="verify_username();">
+                 <img alt="" id="result" style="height: 22px;vertical-align: middle"><br>
+        password:<input type="text" name="" id=""><br>
+        验证码:<input type="text" name="" id="code" onkeyup="captcha();"><br>
+        <input type="button" value="提交" onclick="submit137();">
+    </form>
+</body>
+</html>

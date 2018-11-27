@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+{#    <script src="/static/ajax_app/js/jquery-1.11.1.min.js"></script>#}
+    <script src="{% static 'ajax_app/js/jquery-1.11.1.min.js' %}"></script>
+    <script>
+
+        function send_ajax(){
+            //ajax编码流程
+            //1.核心对象  XHR 创建
+            // 浏览器差异  IE内核：ie    webkit内核：chrome opera safiri ff
+            var xhr;
+            if(window.ActiveXObject){//有值  undefined
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            }else if(window.XMLHttpRequest){//webkit   IE7+
+                xhr = new XMLHttpRequest();
+            }
+            //2.xhr初始化  请求方式  请求地址  请求参数
+            xhr.open("get","{% url 'ajax:hello' %}?name=zhj&age=18")
+            //3.发送请求
+            xhr.send()
+            //4.接受响应
+            // 1> 响应完整   2>请求是成功执行
+            // xhr属性1： readyState  0=创建完毕  1=初始化  2=发送   3=响应开始返回   4=响应完毕
+            // xhr属性2： status 200=成功  404=资源未找到  500=服务器程序错误
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState == 4 && xhr.status == 200){//响应完毕，请求成功
+                    //接受响应  responseText
+                    var ret = xhr.responseText;
+                    //5.dom+css 将响应内容 展示到页面的某个局部中
+                    $("#result").text(ret);
+                    $("#result").css("color","red");
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <input type="text" name="" id="">
+    <input type="button" value="ajax_send" onclick="send_ajax();">
+    <span id="result">xxxxxx</span>
+
+</body>
+</html>

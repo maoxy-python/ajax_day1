@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+{#    <script src="/static/ajax_app/js/jquery-1.11.1.min.js"></script>#}
+    <script src="{% static 'ajax_app/js/jquery-1.11.1.min.js' %}"></script>
+    <script>
+
+        function send_ajax(){
+            //ajax编码流程
+            //1.核心对象  XHR 创建
+            // 浏览器差异  IE内核：ie    webkit内核：chrome opera safiri ff
+            var xhr;
+            if(window.ActiveXObject){//有值  undefined
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            }else if(window.XMLHttpRequest){//webkit   IE7+
+                xhr = new XMLHttpRequest();
+            }
+            //2.xhr初始化  请求方式  请求地址  请求参数  是否为异步
+            xhr.open("get","{% url 'ajax:hello' %}?name=zhj&age=18",false);
+            //3.发送请求
+            xhr.send();
+            alert("hello");
+        }
+    </script>
+</head>
+<body>
+    <a href="{% url 'ajax:hello' %}?name=zhj&age=18">go~~</a>
+    <input type="text" name="" id="">
+    <input type="text" name="" id="">
+    <input type="text" name="" id="">
+    <input type="button" value="btn1111">
+    <input type="button" value="btn2222">
+    <input type="button" value="btn3333">
+    <input type="button" value="ajax_send" onclick="send_ajax();">
+    <span id="result">xxxxxx</span>
+
+</body>
+</html>
