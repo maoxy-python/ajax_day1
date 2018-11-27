@@ -30,3 +30,6 @@ def handle_username(request):
     if username == "wanglulu":
         return HttpResponse("error")
     return HttpResponse("ok")
+
+def test(request):
+    pass
